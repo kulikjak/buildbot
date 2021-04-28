@@ -37,6 +37,8 @@ from buildbot_worker.base import WorkerForBuilderBase
 from buildbot_worker.compat import unicode2bytes
 from buildbot_worker.pbutil import AutoLoginPBFactory
 
+from buildbot_worker.tunnel import HTTPTunnelEndpoint
+
 
 class UnknownCommand(pb.Error):
     pass
@@ -212,17 +214,38 @@ class Worker(WorkerBase, service.MultiService):
         bf = self.bf = BotFactory(buildmaster_host, port, keepalive, maxdelay)
         bf.startLogin(
             credentials.UsernamePassword(name, passwd), client=self.bot)
-        if connection_string is None:
+
+        def get_connection_string(host, port):
             if useTls:
                 connection_type = 'tls'
             else:
                 connection_type = 'tcp'
 
-            connection_string = '{}:host={}:port={}'.format(
+            return '{}:host={}:port={}'.format(
                 connection_type,
-                buildmaster_host.replace(':', r'\:'),  # escape ipv6 addresses
+                host.replace(':', r'\:'),  # escape ipv6 addresses
                 port)
-        endpoint = clientFromString(reactor, connection_string)
+
+        http_tunnel = (os.environ.get('BUILDBOT_USE_PROXY') is not None)
+        assert not (http_tunnel and connection_string), (
+            "http tunneling doesn't work with connection strings")
+
+        if http_tunnel:
+            log.msg("Using http tunnel to connect")
+            try:
+                proxy_host = os.environ['BUILDBOT_PROXY_HOST']
+                proxy_port = os.environ['BUILDBOT_PROXY_PORT']
+            except KeyError:
+                raise ValueError("HTTP proxy needs both BUILDBOT_PROXY_HOST "
+                                 "and BUILDBOT_PROXY_PORT environment variables set")
+
+            connection_string = get_connection_string(proxy_host, proxy_port)
+            proxy_endpoint = clientFromString(reactor, connection_string)
+            endpoint = HTTPTunnelEndpoint(buildmaster_host, port, proxy_endpoint)
+        else:
+            if connection_string is None:
+                connection_string = get_connection_string(buildmaster_host, port)
+            endpoint = clientFromString(reactor, connection_string)
 
         def policy(attempt):
             if maxRetries and attempt >= maxRetries:
