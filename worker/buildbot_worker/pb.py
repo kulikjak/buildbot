@@ -181,7 +181,7 @@ class Worker(WorkerBase, service.MultiService):
                  keepalive, usePTY=None, keepaliveTimeout=None, umask=None,
                  maxdelay=None, numcpus=None, unicode_encoding=None, useTls=None,
                  allow_shutdown=None, maxRetries=None, connection_string=None,
-                 delete_leftover_dirs=False):
+                 delete_leftover_dirs=False, proxy_connection_string=None):
 
         assert usePTY is None, "worker-side usePTY is not supported anymore"
         assert (connection_string is None or
@@ -225,21 +225,13 @@ class Worker(WorkerBase, service.MultiService):
                 host.replace(':', r'\:'),  # escape ipv6 addresses
                 port)
 
-        http_tunnel = (os.environ.get('BUILDBOT_USE_PROXY') is not None)
-        assert not (http_tunnel and connection_string), (
-            "http tunneling doesn't work with connection strings")
+        assert not (proxy_connection_string and connection_string), (
+            "If you want to use HTTP tunneling, then supply build master "
+            "host and port rather than a connection string")
 
-        if http_tunnel:
-            log.msg("Using http tunnel to connect")
-            try:
-                proxy_host = os.environ['BUILDBOT_PROXY_HOST']
-                proxy_port = os.environ['BUILDBOT_PROXY_PORT']
-            except KeyError:
-                raise ValueError("HTTP proxy needs both BUILDBOT_PROXY_HOST "
-                                 "and BUILDBOT_PROXY_PORT environment variables set")
-
-            connection_string = get_connection_string(proxy_host, proxy_port)
-            proxy_endpoint = clientFromString(reactor, connection_string)
+        if proxy_connection_string:
+            log.msg("Using HTTP tunnel to connect through proxy")
+            proxy_endpoint = clientFromString(reactor, proxy_connection_string)
             endpoint = HTTPTunnelEndpoint(buildmaster_host, port, proxy_endpoint)
         else:
             if connection_string is None:
