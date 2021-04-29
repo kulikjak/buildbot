@@ -1,5 +1,7 @@
 
-from twisted.internet import defer, interfaces, protocol
+from twisted.internet import defer
+from twisted.internet import interfaces
+from twisted.internet import protocol
 from zope.interface import implementer
 
 

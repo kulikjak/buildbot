@@ -36,7 +36,6 @@ from buildbot_worker.base import WorkerBase
 from buildbot_worker.base import WorkerForBuilderBase
 from buildbot_worker.compat import unicode2bytes
 from buildbot_worker.pbutil import AutoLoginPBFactory
-
 from buildbot_worker.tunnel import HTTPTunnelEndpoint
 
 
