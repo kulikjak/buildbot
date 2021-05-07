@@ -13,6 +13,11 @@
 #
 # Copyright Buildbot Team Members
 
+#
+# Parts of this code were copied from Twisted Python.
+# Copyright (c) Twisted Matrix Laboratories.
+#
+
 from twisted.internet import defer
 from twisted.internet import interfaces
 from twisted.internet import protocol
@@ -20,6 +25,13 @@ from zope.interface import implementer
 
 
 class HTTPTunnelClient(protocol.Protocol):
+    """
+    This protocol handles the HTTP communication with the proxy server
+    and subsequent creation of the tunnel.
+
+    Once the tunnel is established, all incoming communication is forwarded
+    directly to the wrapped protocol.
+    """
 
     def __init__(self, connectedDeferred):
         # this gets set once the tunnel is ready
@@ -58,6 +70,11 @@ class HTTPTunnelClient(protocol.Protocol):
 
 
 class HTTPTunnelFactory(protocol.ClientFactory):
+    """The protocol factory for the HTTP tunnel.
+
+    It is used as a wrapper for BotFactory, which can hence be shielded
+    from all the proxy business.
+    """
     protocol = HTTPTunnelClient
 
     def __init__(self, host, port, wrappedFactory):
@@ -89,6 +106,9 @@ class HTTPTunnelFactory(protocol.ClientFactory):
 
 @implementer(interfaces.IStreamClientEndpoint)
 class HTTPTunnelEndpoint(object):
+    """This handles the connection to buildbot master on given 'host'
+    and 'port' through the proxy server given as 'proxyEndpoint'.
+    """
 
     def __init__(self, host, port, proxyEndpoint):
         self.host = host
@@ -96,6 +116,7 @@ class HTTPTunnelEndpoint(object):
         self.proxyEndpoint = proxyEndpoint
 
     def connect(self, protocolFactory):
+        """Connect to remote server through an HTTP tunnel."""
         tunnel = HTTPTunnelFactory(self.host, self.port, protocolFactory)
         d = self.proxyEndpoint.connect(tunnel)
         # once tunnel connection is established,
