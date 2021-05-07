@@ -46,7 +46,7 @@ class HTTPTunnelClient(protocol.Protocol):
     def connectionLost(self, reason):
         if self._proxyWrappedProtocol:
             # Proxy connectionLost to the wrapped protocol
-            return self._proxyWrappedProtocol.connectionLost(reason)
+            self._proxyWrappedProtocol.connectionLost(reason)
 
     def dataReceived(self, data):
         if self._proxyWrappedProtocol is not None:
@@ -65,8 +65,9 @@ class HTTPTunnelClient(protocol.Protocol):
         self._proxyWrappedProtocol.makeConnection(self.transport)
         self._connectedDeferred.callback(self._proxyWrappedProtocol)
 
-        # forward all trafic directly to the wrapped protocol
+        # forward all traffic directly to the wrapped protocol
         self.transport.protocol = self._proxyWrappedProtocol
+        return None
 
 
 class HTTPTunnelFactory(protocol.ClientFactory):
