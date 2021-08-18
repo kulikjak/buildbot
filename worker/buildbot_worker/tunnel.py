@@ -67,6 +67,13 @@ class HTTPTunnelClient(protocol.Protocol):
 
         # forward all traffic directly to the wrapped protocol
         self.transport.protocol = self._proxyWrappedProtocol
+
+        # In case the server sent some data together with its response,
+        # forward those to the wrapped protocol.
+        remaining_data = data.split(b"\r\n\r\n", 2)[1]
+        if remaining_data:
+            return self._proxyWrappedProtocol.dataReceived(remaining_data)
+
         return None
 
 
