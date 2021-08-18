@@ -51,7 +51,7 @@ class RunMasterBehindProxy(RunMasterBase):
                                         proxy_connection_string=proxy_connection_string)
 
 
-# Use interop test cases to test the HTTP proxy tunelling.
+# Use interoperability test cases to test the HTTP proxy tunneling.
 
 class ProxyCommandMixinMasterPB(RunMasterBehindProxy, CommandMixinMasterPB):
     pass
@@ -74,7 +74,7 @@ class ProxySetPropertyFromCommandPB(RunMasterBehindProxy, SetPropertyFromCommand
 
 
 class ProxyTransferStepsMasterPb(RunMasterBehindProxy, TransferStepsMasterPb):
-    # proxy is slower in transfering large files
+    # proxy is slower in transferring large files
     timeout = 30
     pass
 
