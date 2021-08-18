@@ -76,7 +76,6 @@ class ProxySetPropertyFromCommandPB(RunMasterBehindProxy, SetPropertyFromCommand
 class ProxyTransferStepsMasterPb(RunMasterBehindProxy, TransferStepsMasterPb):
     # proxy is slower in transferring large files
     timeout = 30
-    pass
 
 
 class ProxyWorkerReconnect(RunMasterBehindProxy, WorkerReconnect):
