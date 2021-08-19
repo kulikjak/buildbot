@@ -21,31 +21,6 @@ jobs:
             connection: 'mysql+mysqldb://buildbot:buildbot@127.0.0.1:3306/bbtest?storage_engine=InnoDB'
             check: mysqladmin ping
 
-          - name: MySQL latest
-            database: mysql:latest
-            connection: 'mysql+mysqldb://buildbot:buildbot@127.0.0.1:3306/bbtest?storage_engine=InnoDB'
-            check: mysqladmin ping
-
-          - name: PostgreSQL 9 / psycopg2
-            database: postgres:9
-            connection: 'postgresql+psycopg2://buildbot:buildbot@127.0.0.1:5432/bbtest'
-            check: pg_isready
-
-          - name: PostgreSQL 9 / pg8000
-            database: postgres:9
-            connection: 'postgresql+pg8000://buildbot:buildbot@127.0.0.1:5432/bbtest'
-            check: pg_isready
-
-          - name: PostgreSQL latest / psycopg2
-            database: postgres:latest
-            connection: 'postgresql+psycopg2://buildbot:buildbot@127.0.0.1:5432/bbtest'
-            check: pg_isready
-
-          - name: PostgreSQL latest / pg8000
-            database: postgres:latest
-            connection: 'postgresql+pg8000://buildbot:buildbot@127.0.0.1:5432/bbtest'
-            check: pg_isready
-
     env:
       BUILDBOT_TEST_DB_URL: ${{ matrix.connection }}
       BUILDBOT_TEST_PROXY_CONNECTION_STRING: 'tcp:127.0.0.1:3128'
