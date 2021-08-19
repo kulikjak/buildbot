@@ -2,10 +2,10 @@ name: CI
 on:
   push:
     branches:
-    - master
+    - test-github-actions
   pull_request:
     branches:
-    - master
+    - test-github-actions
 
 jobs:
   db:
