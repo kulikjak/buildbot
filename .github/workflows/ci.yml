@@ -48,7 +48,7 @@ jobs:
           CONNECT_PORTS: ' '
         ports:
           - '8888:8888'
-          - '30000-40000:30000-40000'
+          - '30500-30500'
 
     steps:
       - name: Dump the config file

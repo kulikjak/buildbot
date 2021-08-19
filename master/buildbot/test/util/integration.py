@@ -175,7 +175,7 @@ class RunMasterBase(unittest.TestCase):
 
         if startWorker:
             if self.proto == 'pb':
-                proto = {"pb": {"port": "tcp:0:interface=127.0.0.1"}}
+                proto = {"pb": {"port": "tcp:30500:interface=127.0.0.1"}}
                 workerclass = worker.Worker
             elif self.proto == 'null':
                 proto = {"null": {}}
