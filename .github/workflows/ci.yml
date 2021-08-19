@@ -48,6 +48,7 @@ jobs:
           CONNECT_PORTS: ' '
         ports:
           - '8888:8888'
+        options: --network host
 
     steps:
       - name: Dump the config file
