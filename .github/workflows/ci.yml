@@ -78,6 +78,7 @@ jobs:
           images: datadog/squid
 
       - name: Dump the access log
+        if: failure()
         run: docker exec -d $(docker ps --latest --quiet) cat /var/log/squid/access.log
 
       #- run: cat /var/log/squid/access.log
