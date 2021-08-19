@@ -42,9 +42,14 @@ jobs:
         options: --health-cmd "${{ matrix.check }}" --health-interval 10s --health-timeout 5s --health-retries 10
 
       proxy:
-        image: datadog/squid:latest
+        image: ajoergensen/tinyproxy:latest
+        env:
+          # intentionally left empty
+          ALLOWED: ""
+          # intentionally left empty
+          CONNECT_PORTS: ""
         ports:
-          - '3128:3128'
+          - '8888:8888'
         #volumes:
         #  - ${{ github.workspace }}/.github/squid.conf:/etc/squid/squid.conf
 
@@ -68,6 +73,10 @@ jobs:
       - run: pip install -U pip
       - run: pip install -r requirements-ci.txt -r requirements-cidb.txt
 
+      - name: Dump the config file
+        if: failure()
+        run: docker exec -i $(docker ps --latest --quiet) cat /etc/tinyproxy/tinyproxy.conf
+
       # run real db tests under coverage to have several merging coverage report
       # https://github.com/codecov/support/wiki/Merging-Reports
       - run: coverage run --rcfile=.coveragerc $(which trial) --reporter=text --rterrors buildbot.test buildbot_worker.test
@@ -77,12 +86,12 @@ jobs:
         if: failure()
         uses: jwalton/gh-docker-logs@v1
         with:
-          images: datadog/squid
+          images: ajoergensen/tinyproxy
 
-      - name: Dump the access log
-        if: failure()
-        run: docker exec -i $(docker ps --latest --quiet) cat /var/log/squid/access.log
+      #- name: Dump the access log
+      #  if: failure()
+      #  run: docker exec -i $(docker ps --latest --quiet) cat /var/log/squid/access.log
 
-      - name: Dump the config file
-        if: failure()
-        run: docker exec -i $(docker ps --latest --quiet) cat /etc/squid/squid.conf
+      #- name: Dump the config file
+      #  if: failure()
+      #  run: docker exec -i $(docker ps --latest --quiet) cat /etc/squid/squid.conf
