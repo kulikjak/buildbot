@@ -42,11 +42,11 @@ jobs:
         options: --health-cmd "${{ matrix.check }}" --health-interval 10s --health-timeout 5s --health-retries 10
 
       proxy:
-        image: datadog/squid
+        image: datadog/squid:latest
         ports:
           - '3128:3128'
-        volumes:
-          - ${{ github.workspace }}/.github/squid.conf:/etc/squid/squid.conf
+        #volumes:
+        #  - ${{ github.workspace }}/.github/squid.conf:/etc/squid/squid.conf
 
     steps:
       - uses: actions/checkout@v2
@@ -82,3 +82,7 @@ jobs:
       - name: Dump the access log
         if: failure()
         run: docker exec -i $(docker ps --latest --quiet) cat /var/log/squid/access.log
+
+      - name: Dump the config file
+        if: failure()
+        run: docker exec -i $(docker ps --latest --quiet) cat /etc/squid/squid.conf
