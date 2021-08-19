@@ -45,6 +45,8 @@ jobs:
         image: datadog/squid
         ports:
           - '3128:3128'
+        volumes:
+          - ${{ github.workspace }}/.github/squid.conf:/etc/squid/squid.conf
 
     steps:
       - uses: actions/checkout@v2
@@ -80,6 +82,3 @@ jobs:
       - name: Dump the access log
         if: failure()
         run: docker exec -i $(docker ps --latest --quiet) cat /var/log/squid/access.log
-
-      #- run: cat /var/log/squid/access.log
-      #  if: failure()
