@@ -44,7 +44,7 @@ jobs:
       proxy:
         image: ajoergensen/tinyproxy:latest
         env:
-          ALLOWED: '0.0.0.0/32'
+          ALLOWED: ' '
           CONNECT_PORTS: ' '
         ports:
           - '8888:8888'

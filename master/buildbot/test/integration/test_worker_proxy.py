@@ -54,23 +54,23 @@ class RunMasterBehindProxy(RunMasterBase):
 # Use interoperability test cases to test the HTTP proxy tunneling.
 
 class ProxyCommandMixinMasterPB(RunMasterBehindProxy, CommandMixinMasterPB):
-    pass
+    timeout = 5
 
 
 class ProxyCompositeStepMixinMasterPb(RunMasterBehindProxy, CompositeStepMixinMasterPb):
-    pass
+    timeout = 5
 
 
 class ProxyInterruptCommandPb(RunMasterBehindProxy, InterruptCommandPb):
-    pass
+    timeout = 5
 
 
 class ProxySecretsConfigPB(RunMasterBehindProxy, SecretsConfigPB):
-    pass
+    timeout = 5
 
 
 class ProxySetPropertyFromCommandPB(RunMasterBehindProxy, SetPropertyFromCommandPB):
-    pass
+    timeout = 5
 
 
 class ProxyTransferStepsMasterPb(RunMasterBehindProxy, TransferStepsMasterPb):
@@ -79,4 +79,4 @@ class ProxyTransferStepsMasterPb(RunMasterBehindProxy, TransferStepsMasterPb):
 
 
 class ProxyWorkerReconnect(RunMasterBehindProxy, WorkerReconnect):
-    pass
+    timeout = 5
