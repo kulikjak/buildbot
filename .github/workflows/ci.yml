@@ -48,6 +48,7 @@ jobs:
 
     env:
       BUILDBOT_TEST_DB_URL: ${{ matrix.connection }}
+      BUILDBOT_TEST_PROXY_CONNECTION_STRING: 'tcp:127.0.0.1:3128'
 
     services:
       database:
@@ -64,6 +65,11 @@ jobs:
           - '3306:3306'
           - '5432:5432'
         options: --health-cmd "${{ matrix.check }}" --health-interval 10s --health-timeout 5s --health-retries 10
+
+      proxy:
+        image: datadog/squid
+        ports:
+          - '3128:3128'
 
     steps:
       - uses: actions/checkout@v2

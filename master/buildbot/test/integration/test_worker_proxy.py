@@ -32,21 +32,21 @@ from .interop.test_worker_reconnect import WorkerReconnect
 # need to have a local proxy server for this to work.
 
 # If you want to run this,
-# export PROXY_CONNECTION_STRING='tcp:127.0.0.1:8888'
+# export BUILDBOT_TEST_PROXY_CONNECTION_STRING='tcp:127.0.0.1:port'
 
 
 class RunMasterBehindProxy(RunMasterBase):
 
     def setUp(self):
-        if "PROXY_CONNECTION_STRING" not in os.environ:
+        if "BUILDBOT_TEST_PROXY_CONNECTION_STRING" not in os.environ:
             raise SkipTest(
                 "HTTP proxy related integration tests only run when environment"
-                " variable PROXY_CONNECTION_STRING is set ")
+                " variable BUILDBOT_TEST_PROXY_CONNECTION_STRING is set ")
 
     @defer.inlineCallbacks
     def setupConfig(self, config_dict, startWorker=True):
 
-        proxy_connection_string = os.environ.get('PROXY_CONNECTION_STRING')
+        proxy_connection_string = os.environ.get('BUILDBOT_TEST_PROXY_CONNECTION_STRING')
         yield RunMasterBase.setupConfig(self, config_dict, startWorker,
                                         proxy_connection_string=proxy_connection_string)
 
