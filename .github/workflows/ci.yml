@@ -44,7 +44,7 @@ jobs:
       proxy:
         image: ajoergensen/tinyproxy:latest
         env:
-          ALLOWED: ' '
+          ALLOWED: '0.0.0.0/0'
           CONNECT_PORTS: ' '
         ports:
           - '8888:8888'
@@ -75,7 +75,7 @@ jobs:
       # run real db tests under coverage to have several merging coverage report
       # https://github.com/codecov/support/wiki/Merging-Reports
       - run: coverage run --rcfile=.coveragerc $(which trial) --reporter=text --rterrors buildbot.test buildbot_worker.test
-        timeout-minutes: 8
+        timeout-minutes: 2
 
       - name: Dump docker logs on failure
         if: failure()
