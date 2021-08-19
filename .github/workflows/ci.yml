@@ -44,14 +44,10 @@ jobs:
       proxy:
         image: ajoergensen/tinyproxy:latest
         env:
-          # intentionally left empty
-          ALLOWED: ""
-          # intentionally left empty
-          CONNECT_PORTS: ""
+          ALLOWED: 0.0.0.0
+          CONNECT_PORTS: ' '
         ports:
           - '8888:8888'
-        #volumes:
-        #  - ${{ github.workspace }}/.github/squid.conf:/etc/squid/squid.conf
 
     steps:
       - name: Dump the config file
