@@ -23,7 +23,7 @@ jobs:
 
     env:
       BUILDBOT_TEST_DB_URL: ${{ matrix.connection }}
-      BUILDBOT_TEST_PROXY_CONNECTION_STRING: 'tcp:127.0.0.1:3128'
+      BUILDBOT_TEST_PROXY_CONNECTION_STRING: 'tcp:127.0.0.1:8888'
 
     services:
       database:
@@ -54,6 +54,9 @@ jobs:
         #  - ${{ github.workspace }}/.github/squid.conf:/etc/squid/squid.conf
 
     steps:
+      - name: Dump the config file
+        run: docker exec -i $(docker ps --latest --quiet) cat /etc/tinyproxy/tinyproxy.conf
+
       - uses: actions/checkout@v2
 
       - run: sudo apt-get install aspell aspell-en enchant iamerican ispell
@@ -72,10 +75,6 @@ jobs:
 
       - run: pip install -U pip
       - run: pip install -r requirements-ci.txt -r requirements-cidb.txt
-
-      - name: Dump the config file
-        if: failure()
-        run: docker exec -i $(docker ps --latest --quiet) cat /etc/tinyproxy/tinyproxy.conf
 
       # run real db tests under coverage to have several merging coverage report
       # https://github.com/codecov/support/wiki/Merging-Reports
