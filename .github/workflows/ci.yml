@@ -69,5 +69,13 @@ jobs:
       # run real db tests under coverage to have several merging coverage report
       # https://github.com/codecov/support/wiki/Merging-Reports
       - run: coverage run --rcfile=.coveragerc $(which trial) --reporter=text --rterrors buildbot.test buildbot_worker.test
+        timeout-minutes: 5
 
-      - run: codecov
+      - name: Dump docker logs on failure
+        if: failure()
+        uses: jwalton/gh-docker-logs@v1
+        with:
+          images: datadog/squid
+
+      - run: cat /var/log/squid/access.log
+        if: failure()
